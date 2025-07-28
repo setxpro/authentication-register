@@ -6,7 +6,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 
-@FeignClient(name = "notificationApi", url = "http://172.16.10.211:7000/api/notification")
+
+@FeignClient(name = "notificationApi", url = "${integration.api.notification}")
 public interface NotificationApi {
 
     @PostMapping("/gmail/email")

@@ -27,6 +27,12 @@ logging:
       max-size: 128m
       max-file: 2
 
+
+integration:
+  api:
+    validate: http://localhost:7000/api/notification
+    notification: http://localhost:7001/api/temporary-code
+
 eureka:
   client:
     service-url:

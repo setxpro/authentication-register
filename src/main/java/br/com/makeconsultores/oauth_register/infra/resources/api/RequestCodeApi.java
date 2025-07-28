@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "validateHash", url = "http://172.16.10.211:7001/api")
+@FeignClient(name = "validateHash", url = "${integration.api.validate}")
 public interface RequestCodeApi {
     @PostMapping("/generate")
     ResponseEntity<ResponseCode> generateCode(@RequestBody RequestCode req);

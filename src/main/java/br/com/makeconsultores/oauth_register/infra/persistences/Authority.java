@@ -20,6 +20,14 @@ public class Authority implements GrantedAuthority {
     @JoinColumn(name = "access_id")
     private Access access;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @JsonIgnore
     @Override
     public String getAuthority() {
