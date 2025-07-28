@@ -10,9 +10,9 @@ spring:
       enabled: false
 
   datasource:
-    url: jdbc:postgresql://172.16.10.211:5432/make
-    username: postgres
-    password: senha001
+    url: "${URI_CONNECTION}"
+    username: "${DB_USER}"
+    password: "${DB_PASSWORD}"
 
   jpa:
     hibernate:
@@ -31,12 +31,12 @@ logging:
 api:
   security:
     token:
-      secret: "4e2413ba332cf68d417f97523fc5c8faa72bacb9b1b2034de7326ecb2a635433fefb27e7aa1a2a9a656cb591ac050fd6112297c81282d4e6c0983d9add531ad0"
+      secret: "${SECRET_TOKEN}"
 
 eureka:
   client:
     service-url:
-      defaultZone: http://discovery:8761/eureka
+      defaultZone: "${SERVICE_DISCOVERY}"
     instance:
       hostname: oauth-register
       instance-id: ${spring.application.name}:${instanceId:${random.value}}
