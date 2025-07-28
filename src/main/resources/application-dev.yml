@@ -1,0 +1,36 @@
+server:
+  port: 7009
+
+spring:
+  mvc:
+    servlet:
+      path: /api/sdu
+  cloud:
+    compatibility-verifier:
+      enabled: false
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/make
+    username: postgres
+    password: senha001
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+logging:
+  driver:
+    options:
+      max-size: 128m
+      max-file: 2
+
+eureka:
+  client:
+    service-url:
+      defaultZone: https://spring-registery.bagaggio.com.br/eureka
+    instance:
+      hostname: oauth-register
+      instance-id: ${spring.application.name}:${instanceId:${random.value}}
