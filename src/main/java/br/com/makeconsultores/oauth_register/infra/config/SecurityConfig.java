@@ -7,6 +7,7 @@ import org.apache.logging.log4j.util.InternalException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@Profile("!test")
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -30,7 +32,7 @@ public class SecurityConfig {
     public static final String ACCESS_PATH = "/access";
 
 
-    @Autowired
+    @Autowired(required = false)
     SecurityFilter securityFilter;
 
     @Bean
@@ -68,9 +70,9 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.POST,AUTH_PATH + "/validate-code").permitAll()
                             .requestMatchers(HttpMethod.POST,AUTH_PATH + "/forget-password").permitAll()
                             .requestMatchers(HttpMethod.PUT,AUTH_PATH + "/update-password-forget/**").permitAll()
-
-                            .requestMatchers(HttpMethod.POST,USER_PATH).permitAll()
-                            .requestMatchers(HttpMethod.GET,USER_PATH).permitAll()
+                            .requestMatchers(HttpMethod.GET,AUTH_PATH + "/jwt/validate").permitAll()
+                            .requestMatchers(HttpMethod.POST, USER_PATH).permitAll()
+                            .requestMatchers(HttpMethod.GET, USER_PATH).permitAll()
                             .requestMatchers(HttpMethod.GET,USER_PATH + "/**").permitAll()
                             .requestMatchers(HttpMethod.PUT,USER_PATH + "/**").permitAll()
                             .requestMatchers(HttpMethod.DELETE,USER_PATH + "/**").permitAll()

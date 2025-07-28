@@ -33,6 +33,11 @@ api:
     token:
       secret: "${SECRET_TOKEN}"
 
+integration:
+  api:
+    validate: "${URL_VALIDATION}"
+    notification: "${URL_NOTIFICATION}"
+
 eureka:
   client:
     service-url:

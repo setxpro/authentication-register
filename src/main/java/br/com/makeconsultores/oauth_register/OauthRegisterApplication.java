@@ -9,9 +9,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients
 @EnableDiscoveryClient
 public class OauthRegisterApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(OauthRegisterApplication.class, args);
 	}
-
 }

@@ -4,9 +4,9 @@ import br.com.makeconsultores.oauth_register.infra.persistences.Access;
 import br.com.makeconsultores.oauth_register.infra.persistences.dtos.UserSignInDTO;
 import br.com.makeconsultores.oauth_register.infra.services.AccessService;
 import br.com.makeconsultores.oauth_register.infra.services.AuthService;
+import br.com.makeconsultores.oauth_register.infra.services.TokenService;
 import br.com.makeconsultores.oauth_register.infra.services.dtos.*;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.ws.rs.DELETE;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +19,12 @@ public class AuthController {
 
     private final AuthService authService;
     private final AccessService accessService;
+    private final TokenService tokenService;
 
-    public AuthController(AuthService authService, AccessService accessService) {
+    public AuthController(AuthService authService, AccessService accessService, TokenService tokenService) {
         this.authService = authService;
         this.accessService = accessService;
+        this.tokenService = tokenService;
     }
 
     @PostMapping("/sign-in")
@@ -48,5 +50,10 @@ public class AuthController {
     @DeleteMapping("/add-authority/{id}")
     public ResponseEntity<MessageDTO> removeAuthority(@PathVariable Long id) {
         return new ResponseEntity<>(accessService.removeAuthority(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/jwt/validate")
+    public ResponseEntity<?> validateToken(@RequestParam String token) {
+        return tokenService.customValidate(token);
     }
 }

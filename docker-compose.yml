@@ -10,10 +10,16 @@ services:
     ports:
       - '0.0.0.0:7009:7009'
     restart: always
-    networks:
-      - make-network
+    environment:
+      - URI_CONNECTION=${URI_CONNECTION:-connect}
+      - DB_USER=${DB_USER:-user}
+      - DB_PASSWORD=${DB_PASSWORD:-pass}
+      - SECRET_TOKEN=${SECRET_TOKEN:-secret}
+      - URL_VALIDATION=${URL_VALIDATION:-validation}
+      - URL_NOTIFICATION=${URL_NOTIFICATION:-notification}
+      - SERVICE_DISCOVERY=${SERVICE_DISCOVERY:-discovery}
 
 networks:
-  make-network:
-    name: make-network
-    driver: bridge
+  default:
+    name: bagaggio
+    external: true

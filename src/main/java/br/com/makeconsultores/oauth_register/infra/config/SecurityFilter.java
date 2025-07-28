@@ -6,7 +6,9 @@ import br.com.makeconsultores.oauth_register.infra.services.TokenService;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,14 +29,20 @@ import java.util.stream.Collectors;
 @Configuration
 public class SecurityFilter extends OncePerRequestFilter {
 
+
     private final TokenService tokenService;
+
+    @PostConstruct
+    public void logLoad() {
+        System.out.println(">>> SecurityFilter (default) LOADED <<<");
+    }
 
     public SecurityFilter(TokenService tokenService) {
         this.tokenService = tokenService;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         try {
 
             String uri = request.getRequestURI();
@@ -83,7 +91,8 @@ public class SecurityFilter extends OncePerRequestFilter {
     private static boolean isIsPublic(String method, String uri) {
         boolean isPublic =
                         (method.equals("POST") && (uri.startsWith("/api/sdu/auth"))) ||
-
+                                (method.equals("GET") && (uri.equals("/api/sdu/auth/jwt/validate"))) ||
+                                (method.equals("GET") && (uri.startsWith("/api/sdu/user"))) ||
                         (method.equals("PUT") && (
                                 uri.startsWith("/access/update-access/") ||
                                         uri.startsWith("/access/update-password/") ||
@@ -106,7 +115,7 @@ public class SecurityFilter extends OncePerRequestFilter {
                 }
             }
         }
-        throw new NotFoundException("Token Não encontrado.");
+        return null;
     }
 
 }
