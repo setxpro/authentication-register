@@ -3,6 +3,7 @@ package br.com.makeconsultores.oauth_register.infra.config;
 import br.com.makeconsultores.oauth_register.delivery.dtos.MessageDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.util.InternalException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +44,6 @@ public class SecurityConfig {
                                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-                                System.out.println(authException.getMessage());
                                 // Exemplo de mensagem de erro
                                 String json = new ObjectMapper()
                                         .writeValueAsString(new MessageDTO("Usuário precisa estar autenticado para realizar esta ação!", HttpStatus.UNAUTHORIZED.value()));
@@ -53,7 +53,6 @@ public class SecurityConfig {
                                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 
-                                System.out.println(accessDeniedException.getMessage());
                                 String json = new ObjectMapper()
                                         .writeValueAsString(new MessageDTO("Usuário não tem permissão para executar essa tarefa!", HttpStatus.FORBIDDEN.value()));
                                 response.getWriter().write(json);
@@ -91,9 +90,7 @@ public class SecurityConfig {
                     .build();
         }
         catch (Exception e) {
-            e.printStackTrace();
-
-            throw new RuntimeException();
+            throw new InternalException("Erro Interno: " + e.getMessage());
         }
     }
 

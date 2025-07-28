@@ -4,7 +4,6 @@ import br.com.makeconsultores.oauth_register.delivery.exceptions.FieldCannotEmpt
 import br.com.makeconsultores.oauth_register.delivery.exceptions.NotFoundException;
 import br.com.makeconsultores.oauth_register.infra.persistences.Access;
 import br.com.makeconsultores.oauth_register.infra.persistences.AccessRepository;
-import br.com.makeconsultores.oauth_register.infra.persistences.Authority;
 import br.com.makeconsultores.oauth_register.infra.persistences.AuthorityRepository;
 import br.com.makeconsultores.oauth_register.infra.services.dtos.MessageDTO;
 import br.com.makeconsultores.oauth_register.infra.services.dtos.UpdateAccessDTO;

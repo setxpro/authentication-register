@@ -1,7 +1,7 @@
 package br.com.makeconsultores.oauth_register.infra.config;
 
 import br.com.makeconsultores.oauth_register.delivery.dtos.MessageDTO;
-import br.com.makeconsultores.oauth_register.infra.persistences.AccessRepository;
+import br.com.makeconsultores.oauth_register.delivery.exceptions.NotFoundException;
 import br.com.makeconsultores.oauth_register.infra.services.TokenService;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -17,8 +17,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -29,11 +27,9 @@ import java.util.stream.Collectors;
 @Configuration
 public class SecurityFilter extends OncePerRequestFilter {
 
-    private final AccessRepository accessRepository;
     private final TokenService tokenService;
 
-    public SecurityFilter(AccessRepository accessRepository, TokenService tokenService) {
-        this.accessRepository = accessRepository;
+    public SecurityFilter(TokenService tokenService) {
         this.tokenService = tokenService;
     }
 
@@ -42,36 +38,11 @@ public class SecurityFilter extends OncePerRequestFilter {
         try {
 
             String uri = request.getRequestURI();
-            System.out.println("CALLED URI" + uri);
 
             String method = request.getMethod();
-            System.out.println("CALLED METHOD" + method);
 
             // Lista de endpoints públicos
-            boolean isPublic =
-                    (method.equals("POST") && (uri.equals("/api/sdu/auth/sign-in") ||
-                            uri.equals("/api/sdu/auth/logout") ||
-                            uri.equals("/api/sdu/auth/validate-code") ||
-                            uri.equals("/api/sdu/auth/forget-password") ||
-                            uri.startsWith("/api/sdu/auth/update-password-forget"))) ||
-                            uri.equals("/api/sdu/auth/add-authority") ||
-
-                            (method.equals("POST") && uri.equals("/api/sdu/user")) ||
-                            (method.equals("GET") && (uri.startsWith("/api/sdu/user"))) ||
-                            (method.equals("PUT") && uri.startsWith("/api/sdu/user")) ||
-                            (method.equals("DELETE") && uri.startsWith("/api/sdu/user")) ||
-
-                            (method.equals("GET") && uri.startsWith("/access/")) ||
-
-                            (method.equals("PUT") && (
-                                    uri.startsWith("/access/update-access/") ||
-                                            uri.startsWith("/access/update-password/") ||
-                                            uri.startsWith("/access/password-forgot/"))) ||
-
-                            (method.equals("POST") && uri.startsWith("/system")) ||
-                            (method.equals("GET") && uri.startsWith("/system")) ||
-                            (method.equals("PUT") && uri.startsWith("/system")) ||
-                            (method.equals("DELETE") && uri.startsWith("/system"));
+            boolean isPublic = isIsPublic(method, uri);
 
             if (isPublic) {
                 // Pula autenticação e segue
@@ -106,8 +77,18 @@ public class SecurityFilter extends OncePerRequestFilter {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             String json = new ObjectMapper().writeValueAsString(new MessageDTO(ex.getMessage(), HttpStatus.UNAUTHORIZED.value()));
             response.getWriter().write(json);
-            return;
         }
+    }
+
+    private static boolean isIsPublic(String method, String uri) {
+        boolean isPublic =
+                        (method.equals("POST") && (uri.startsWith("/api/sdu/auth"))) ||
+
+                        (method.equals("PUT") && (
+                                uri.startsWith("/access/update-access/") ||
+                                        uri.startsWith("/access/update-password/") ||
+                                        uri.startsWith("/access/password-forgot/")));
+        return isPublic;
     }
 
     private String recoverToken(HttpServletRequest request) {
@@ -125,9 +106,7 @@ public class SecurityFilter extends OncePerRequestFilter {
                 }
             }
         }
-        return null;
+        throw new NotFoundException("Token Não encontrado.");
     }
-
-
 
 }
